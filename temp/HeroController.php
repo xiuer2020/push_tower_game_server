@@ -60,18 +60,7 @@ class HeroController extends AdminController
             }
         });
         $grid->column('location', __('英雄定位'));
-        $grid->column('specialty', __('英雄特长'))->display(function ($arr) {
-            $newArr = $arr[0];
-            if (count($arr) > 1) {
-                array_shift($arr);
-                foreach ($arr as $index => $value) {
-                    $newArr = $newArr . ',' . $value;
-                }
-                return $newArr;
-            } else {
-                return $newArr;
-            }
-        });
+        $grid->column('specialty', __('英雄特长'));
         $grid->column('period', __('英雄时期'));
         $grid->column('existence', __('英雄生存'));
         $grid->column('output', __('英雄输出'));

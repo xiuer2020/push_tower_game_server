@@ -9,5 +9,8 @@ class Hero extends Model
 {
     use HasFactory;
     protected $table = 'heros';
-    protected $casts = ['out_loading' => 'json','occupation' => 'json','specialty' =>'json'];
+    protected $casts = ['out_loading' => 'json','occupation' => 'json','specialty' =>'json', 'relevant'=>'json'];
+    public function user(){
+        return $this->hasOne(User::class);
+    }
 }
