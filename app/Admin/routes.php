@@ -14,5 +14,6 @@ Route::group([
     $router->get('/', 'HomeController@index')->name('home');
     $router->resource('heros', HeroController::class);
     $router->resource('equipments', EquipmentController::class);
+    $router->resource('thresholds', ThresholdController::class);
 
 });

@@ -7,6 +7,7 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Illuminate\Http\Request;
 use App\Models\User;
 
 class HeroController extends AdminController
@@ -27,10 +28,24 @@ class HeroController extends AdminController
     {
         $grid = new Grid(new Hero());
 
-//        $grid->column('id', __('英雄Id'));
+        $grid->filter(function ($filter) {
+
+            // 去掉默认的id过滤器
+            $filter->disableIdFilter();
+
+            // 在这里添加字段过滤器
+            $filter->like('occupation', '英雄职业');
+        });
+//        $grid->fixColumns(1,-3);
+
+
+        $grid->quickSearch('name');
+        $grid->model()->orderBy('add_time', 'asc');
+
         $grid->column('name', __('英雄名称'));
+//        $grid->column('id', 'id');
         $grid->column('proficiency', __('英雄熟练度'));
-        $grid->column('launch_time', __('英雄上架时间'));
+        $grid->column('add_time', __('英雄上架时间'));
         $grid->column('combat_power', __('英雄战力值'));
         $grid->column('area_code', __('英雄区号'));
         $grid->column('out_loading', __('英雄出装'))->display(function ($arr) {
@@ -105,6 +120,7 @@ class HeroController extends AdminController
         $grid->column('created_at', __('创建时间'));
         $grid->column('updated_at', __('更新时间'));
 
+
         return $grid;
     }
 
@@ -121,7 +137,7 @@ class HeroController extends AdminController
         $show->field('id', __('英雄Id'));
         $show->field('name', __('英雄名称'));
         $show->field('proficiency', __('英雄熟练度'));
-        $show->field('launch_time', __('英雄上架时间'));
+        $show->field('add_time', __('英雄上架时间'));
         $show->field('combat_power', __('英雄战力值'));
         $show->field('area_code', __('英雄区号'));
         $show->field('out_loading', __('英雄出装'));
@@ -174,6 +190,7 @@ class HeroController extends AdminController
     protected function form()
     {
         $form = new Form(new Hero());
+
         $occupationOptions = ['坦克' => '坦克', '战士' => '战士', '刺客' => '刺客', '法师' => '法师', '射手' => '射手', '辅助' => '辅助'];
         $locationOptions = [
             "先锋坦克" => "先锋坦克",
@@ -187,7 +204,6 @@ class HeroController extends AdminController
             "守护辅助" => "守护辅助",
             "冲锋战士" => "冲锋战士",
             "狂战士" => "狂战士",
-            "典韦" => "典韦",
             "控场法师" => "控场法师",
             "游斗刺客" => "游斗刺客",
             "爆发战士" => "爆发战士",
@@ -244,51 +260,80 @@ class HeroController extends AdminController
             "中路" => "中路",
             "游走" => "游走",
             "发育路" => "发育路"];
-        $raceOptions = [];
-        $powerOptions = [];
+        $raceOptions = ["人类" => "人类",
+            "人造人" => "人造人",
+            "魔种" => "魔种",
+            "人魔混血" => "人魔混血",
+            "神职者" => "神职者",
+            "超智慧体" => "超智慧体",
+            "精灵" => "精灵"];
+        $powerOptions = ["蜀" => "蜀",
+            "玄雍" => "玄雍",
+            "日之塔" => "日之塔",
+            "长安" => "长安",
+            "云梦泽" => "云梦泽",
+            "长城守卫军" => "长城守卫军",
+            "稷下学院" => "稷下学院",
+            "灞上" => "灞上",
+            "倒悬天" => "倒悬天",
+            "吴" => "吴",
+            "魏" => "魏",
+            "鸿门" => "鸿门",
+            "日落神殿" => "日落神殿",
+            "稷下学院" => "稷下学院",
+            "扶桑" => "扶桑",
+            "海都家族" => "海都家族",
+            "海都" => "海都",
+            "尧天" => "尧天",
+            "日落圣殿" => "日落圣殿",
+            "南荒" => "南荒",
+            "金庭国" => "金庭国",
+            "狼旗" => "狼旗",
+            "黄金森林" => "黄金森林",
+            "稷下" => "稷下"
+        ];
 
 
-        $form->text('name', __('英雄名称'));
-        $form->number('proficiency', __('英雄熟练度'));
-        $form->datetime('launch_time', __('英雄上架时间'));
-        $form->number('combat_power', __('英雄战力值'));
-        $form->number('area_code', __('英雄区号'));
+        $form->text('name', __('英雄名称'))->default('name');
+        $form->number('proficiency', __('英雄熟练度'))->default('1');
+        $form->datetime('add_time', __('英雄上架时间'))->default('2021-05-29 00:00:00');
+        $form->number('combat_power', __('英雄战力值'))->default('1');
+        $form->number('area_code', __('英雄区号'))->default('1');
         $form->list('out_loading', __('英雄出装'));
-        $form->image('poster', __('英雄海报'));
-        $form->file('full_body_video', __('英雄全身视频'));
-
+        $form->image('poster', __('英雄海报'))->default('images/error.png');
+        $form->file('full_body_video', __('英雄全身视频'))->default('files/error.png');
         $form->checkbox('occupation', __('英雄职业'))->options($occupationOptions);
-        $form->radio('location', __('英雄定位'))->options($locationOptions);
+        $form->radio('location', __('英雄定位'))->options($locationOptions)->default('先锋坦克');
         $form->checkbox('specialty', __('英雄特长'))->options($specialtyOptions);
-        $form->radio('period', __('英雄时期'))->options($periodOptions);
-        $form->slider('existence', __('英雄生存'));
-        $form->slider('output', __('英雄输出'));
-        $form->slider('difficulty', __('英雄难度'));
-        $form->radio('shunt', __('英雄分路'))->options($shuntOptions);
-        $form->radio('race', __('英雄种族'))->options($raceOptions);
-        $form->number('height', __('英雄身高'));
-        $form->text('energy', __('英雄能量'));
-        $form->radio('power', __('英雄势力'))->options($powerOptions);
-        $form->text('identity', __('英雄身份'));
+        $form->radio('period', __('英雄时期'))->options($periodOptions)->default('前期');
+        $form->slider('existence', __('英雄生存'))->default('30');
+        $form->slider('output', __('英雄输出'))->default('1');
+        $form->slider('difficulty', __('英雄难度'))->default('1');
+        $form->radio('shunt', __('英雄分路'))->options($shuntOptions)->default('对抗路');
+        $form->radio('race', __('英雄种族'))->options($raceOptions)->default('人类');
+        $form->number('height', __('英雄身高'))->default('1');
+        $form->text('energy', __('英雄能量'))->default('energy');
+        $form->radio('power', __('英雄势力'))->options($powerOptions)->default('蜀');
+        $form->list('identity', __('英雄身份'));
         $form->keyValue('relevant', __('相关英雄'));
-        $form->number('maximum_health', __('英雄最大生命值'));
-        $form->number('maximum_mana', __('英雄最大法力值'));
-        $form->number('magic_attack', __('法术攻击'));
-        $form->number('physical_attack', __('物理攻击'));
-        $form->number('spell_defense', __('法术防御'));
-        $form->number('physical_defense', __('物理防御'));
-        $form->number('moving_speed', __('移速'));
-        $form->number('physical_penetration', __('物理穿透'));
-        $form->number('spell_penetration', __('法术穿透'));
-        $form->number('attack_speed', __('移速加成'));
-        $form->number('critical_hit_probability', __('暴击几率'));
-        $form->number('critical_hit_effect', __('暴击效果'));
-        $form->number('physical_blood_sucking', __('物理吸血'));
-        $form->number('sorcery_sucks_blood', __('法术吸血'));
-        $form->number('cooling_reduction', __('冷却缩减'));
-        $form->number('attack_range', __('攻击范围'));
-        $form->number('toughness', __('韧性'));
-        $form->number('return_blood', __('每5秒回血'));
+        $form->number('maximum_health', __('英雄最大生命值'))->default('1');
+        $form->number('maximum_mana', __('英雄最大法力值'))->default('1');
+        $form->number('magic_attack', __('法术攻击'))->default('1');
+        $form->number('physical_attack', __('物理攻击'))->default('1');
+        $form->number('spell_defense', __('法术防御'))->default('1');
+        $form->number('physical_defense', __('物理防御'))->default('1');
+        $form->number('moving_speed', __('移速'))->default('1');
+        $form->number('physical_penetration', __('物理穿透'))->default('1');
+        $form->number('spell_penetration', __('法术穿透'))->default('1');
+        $form->number('attack_speed', __('移速加成'))->default('1');
+        $form->number('critical_hit_probability', __('暴击几率'))->default('1');
+        $form->number('critical_hit_effect', __('暴击效果'))->default('1');
+        $form->number('physical_blood_sucking', __('物理吸血'))->default('1');
+        $form->number('sorcery_sucks_blood', __('法术吸血'))->default('1');
+        $form->number('cooling_reduction', __('冷却缩减'))->default('1');
+        $form->number('attack_range', __('攻击范围'))->default('1');
+        $form->number('toughness', __('韧性'))->default('1');
+        $form->number('return_blood', __('每5秒回血'))->default('1');
 
         return $form;
     }

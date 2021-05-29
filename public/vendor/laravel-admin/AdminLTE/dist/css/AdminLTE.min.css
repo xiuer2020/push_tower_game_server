@@ -1891,8 +1891,8 @@ th:first-child {
     border-top-right-radius: 0;
     border-bottom-right-radius: 3px;
     border-bottom-left-radius: 3px;
-    overflow: auto;
-    max-height: 470px;
+    overflow: auto !important;
+    max-height: 410px;
     padding: 10px
 }
 
