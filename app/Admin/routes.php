@@ -16,4 +16,6 @@ Route::group([
     $router->resource('equipments', EquipmentController::class);
     $router->resource('thresholds', ThresholdController::class);
 
+    $router->resource('temps', TempController::class);
+
 });

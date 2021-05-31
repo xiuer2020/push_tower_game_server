@@ -28,6 +28,7 @@ class ThresholdController extends AdminController
 
         $grid->column('id', 'id');
         $grid->column('speeds', 'speeds');
+        $grid->column('thumb', 'thumb')->image();
         $grid->column('created_at', 'created_at');
 
         return $grid;
@@ -58,6 +59,7 @@ class ThresholdController extends AdminController
         $form = new Form(new Threshold());
 
         $form->list('speeds', __('攻速阈值'));
+        $form->image('thumb', __('封面图片'))->uniqueName();
 
 
         return $form;

@@ -26,11 +26,16 @@ class EquipmentController extends AdminController
     {
         $grid = new Grid(new Equipment());
 
+        $grid->filter(function($filter){
+            $filter->disableIdFilter();
+            $filter->equal('type', '装备类型');
+        });
+
         $grid->column('id', __('装备Id'));
         $grid->column('name', __('装备名称'));
         $grid->column('price', __('装备价格'));
         $grid->column('type', __('装备类型'));
-        $grid->column('picture', __('装备图片'));
+        $grid->column('picture', __('装备图片'))->image();
         $grid->column('created_at', __('创建时间'));
         $grid->column('updated_at', __('更新时间'));
 
@@ -68,11 +73,18 @@ class EquipmentController extends AdminController
     {
         $form = new Form(new Equipment());
 
-        $form->text('name', __('装备名称'));
-        $form->number('price', __('装备价格'));
-        $form->text('type', __('装备类型'));
-//        $form->image('picture', __('装备图片'));
-        $form->text('picture', __('装备图片'));
+        $type_options = ["攻击" => "攻击",
+            "法术" => "法术",
+            "防御" => "防御",
+            "移动" => "移动",
+            "打野" => "打野",
+            "游走" => "游走"];
+
+
+        $form->text('name', __('装备名称'))->default('name');
+        $form->number('price', __('装备价格'))->default('1');
+        $form->radio('type', __('装备类型'))->options($type_options)->default('攻击');
+        $form->image('picture', __('装备图片'));
 
         return $form;
     }
