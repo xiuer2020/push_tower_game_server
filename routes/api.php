@@ -15,7 +15,7 @@ use App\Http\Controllers\UserController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::get('test', [UserController::class, 'test']);
+Route::any('test', [UserController::class, 'test']);
 
 
 
